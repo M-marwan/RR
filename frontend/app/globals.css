@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── RR Design System ────────────────────────────────────────────────────── */
+:root {
+  --rr-obsidian: #0A0A0A;
+  --rr-charcoal: #141414;
+  --rr-steel: #1E1E1E;
+  --rr-muted: #2A2A2A;
+  --rr-border: #333333;
+  --rr-subtle: #4A4A4A;
+  --rr-text: #E8E0D0;
+  --rr-dim: #A09888;
+  --rr-cream: #F5F0E8;
+  --rr-brass: #C8A24A;
+  --rr-brass-light: #D4B060;
+  --rr-brass-dark: #A07830;
+  --rr-oxblood: #8B1A1A;
+  --rr-sage: #4A7A5A;
+  --rr-slate: #4A5A7A;
+  --rr-urgent: #FF4444;
+  --rr-warn: #FF9900;
+  --rr-ok: #44BB44;
+  --rr-intel: #4488FF;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--rr-obsidian);
+  color: var(--rr-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--rr-charcoal); }
+::-webkit-scrollbar-thumb { background: var(--rr-subtle); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--rr-brass-dark); }
+
+/* ─── Typography ─────────────────────────────────────────────────────────── */
+.rr-heading { font-family: 'EB Garamond', Georgia, serif; }
+.rr-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+/* ─── Brass accent border ────────────────────────────────────────────────── */
+.rr-brass-border { border: 1px solid var(--rr-brass); }
+.rr-brass-left { border-left: 2px solid var(--rr-brass); }
+
+/* ─── Card styles ─────────────────────────────────────────────────────────── */
+.rr-card {
+  background: var(--rr-steel);
+  border: 1px solid var(--rr-border);
+  border-radius: 4px;
+}
+.rr-card:hover { border-color: var(--rr-subtle); }
+
+/* ─── Status badges ─────────────────────────────────────────────────────── */
+.badge-action  { background: rgba(255,68,68,0.15); color: var(--rr-urgent); border: 1px solid rgba(255,68,68,0.3); }
+.badge-project { background: rgba(68,136,255,0.15); color: var(--rr-intel); border: 1px solid rgba(68,136,255,0.3); }
+.badge-deal    { background: rgba(200,162,74,0.15); color: var(--rr-brass); border: 1px solid rgba(200,162,74,0.3); }
+.badge-intel   { background: rgba(74,122,90,0.15); color: var(--rr-sage); border: 1px solid rgba(74,122,90,0.3); }
+.badge-admin   { background: rgba(74,74,74,0.4); color: var(--rr-dim); border: 1px solid var(--rr-subtle); }
+.badge-noise   { background: transparent; color: var(--rr-subtle); border: 1px solid var(--rr-muted); }
+
+/* ─── Priority indicator ─────────────────────────────────────────────────── */
+.priority-1 { color: var(--rr-urgent); }
+.priority-2 { color: var(--rr-warn); }
+.priority-3 { color: var(--rr-brass); }
+.priority-4 { color: var(--rr-dim); }
+.priority-5 { color: var(--rr-subtle); }
+
+/* ─── Wire item verification ─────────────────────────────────────────────── */
+.status-confirmed    { color: var(--rr-ok); }
+.status-verified     { color: var(--rr-sage); }
+.status-reported     { color: var(--rr-brass); }
+.status-alleged      { color: var(--rr-warn); }
+.status-disputed     { color: var(--rr-urgent); }
+.status-low_credibility { color: var(--rr-subtle); }
