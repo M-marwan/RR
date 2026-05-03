@@ -5,7 +5,8 @@ import redis as redis_client
 import logging
 
 from app.config import get_settings
-from app.db.session import db_health
+from app.db.session import db_health, get_db
+from sqlalchemy import text
 from app import scheduler as rr_scheduler
 from app.auth import current_user
 from app.api.schemas import HealthOut, MeOut
@@ -61,24 +62,53 @@ def health():
     }
 
 
-# Echoes the authenticated principal — frontend uses this to confirm session.
+# Echoes the authenticated principal — frontend uses this to confirm session
+# and discover the workspaces (companies) they belong to.
 @app.get("/api/me", response_model=MeOut)
 def me(user: dict = Depends(current_user)):
+    email = (user.get("preferred_username") or user.get("email") or "").lower()
+    workspaces = []
+    try:
+        with get_db() as db:
+            # Dev-mode principal sees ALL workspaces; real users see their memberships.
+            if user.get("_dev_mode"):
+                rows = db.execute(text("""
+                    SELECT * FROM workspaces
+                    WHERE archived_at IS NULL
+                    ORDER BY display_name ASC
+                """)).mappings().all()
+            else:
+                rows = db.execute(text("""
+                    SELECT w.*
+                    FROM workspaces w
+                    JOIN workspace_members m ON m.workspace_id = w.id
+                    WHERE w.archived_at IS NULL
+                      AND LOWER(m.email) = :email
+                    ORDER BY w.display_name ASC
+                """), {"email": email}).mappings().all()
+            workspaces = [dict(r) for r in rows]
+    except Exception:
+        # If the workspaces table doesn't exist yet (alembic not run), return empty.
+        # The frontend handles empty workspaces gracefully.
+        workspaces = []
+
     return {
         "sub": user.get("sub"),
         "name": user.get("name"),
-        "email": user.get("preferred_username") or user.get("email"),
+        "email": email or None,
         "roles": user.get("roles", []),
         "dev_mode": bool(user.get("_dev_mode")),
+        "workspaces": workspaces,
     }
 
 
 # API routes — every router mounted here is auth-protected via Depends(current_user).
 # /health and /api/me above are explicit (me is auth-protected; health is not).
-from app.api import entities, projects, tasks, email, briefing, feed, search, admin
+from app.api import entities, projects, tasks, email, briefing, feed, search, admin, workspaces
 
 _auth = [Depends(current_user)]
 
+app.include_router(workspaces.router, prefix="/api", dependencies=_auth)
 app.include_router(entities.router, prefix="/api", dependencies=_auth)
 app.include_router(projects.router, prefix="/api", dependencies=_auth)
 app.include_router(tasks.router, prefix="/api", dependencies=_auth)

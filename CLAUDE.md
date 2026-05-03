@@ -72,17 +72,26 @@ API mount prefix: `/api`. All endpoints listed in `app/main.py:61-70`.
 
 ## Database schema highlights
 
-Schema lives in `backend/app/db/schema.sql` (loaded once via Docker entrypoint at `001_schema.sql`). 15 core tables, 7 with `vector(384)` columns and HNSW indexes:
+Schema lives in `backend/app/db/schema.sql` (loaded once via Docker entrypoint at `001_schema.sql`). 15 core tables baseline, 7 with `vector(384)` columns and HNSW indexes. Alembic migrations layer on top of that baseline.
 
+**Baseline (schema.sql):**
 - **Entity graph**: `entities`, `sources`, `documents`, `claims`, `events`, `relationships`
 - **Email**: `email_accounts`, `contacts`, `email_messages` (24 cols incl. Claude classification), `email_threads`, `email_attachments`
 - **Work**: `projects`, `tasks`, `outbound_queue`
 - **Intel ingestion**: `newsletter_sources`, `social_monitors`, `intel_project_matches`
 - **Synthesis & metrics**: `synthesis_cache`, `claude_usage`, `economic_indicators`, `commodity_prices`
 
+**Migration 0002** — added 3 hot-path indexes.
+
+**Migration 0003 (Phase 1A.1)** — multi-tenant tables:
+- `workspaces` — one per company (slug, display_name, industry, primary_color, M365 binding fields, archived_at soft delete)
+- `workspace_members` — entity ↔ workspace with role (`principal` / `exec` / `operator` / `readonly`)
+- `audit_log` — every mutation, for UAE PDPL / DIFC compliance
+- Added nullable `workspace_id` FK to `projects`, `tasks`, `email_messages`, `email_threads`, `outbound_queue`
+
 Hypertables (TimescaleDB-style): `claude_usage`, `economic_indicators`, `commodity_prices`.
 
-**Missing tables** (frontend renders from them via stub data):
+**Missing tables** (Phase 1A.2 — next):
 - `briefing_synthesis` (Raymond's daily dispatch + Three Moves)
 - `open_loops` (person + days_waiting)
 - `capital_position` (deployable / committed / pipeline)

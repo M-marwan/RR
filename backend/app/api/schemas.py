@@ -55,6 +55,58 @@ class OkOut(_RRBase):
     ok: bool = True
 
 
+# ─── workspaces (companies) ──────────────────────────────────────────────────
+
+
+class WorkspaceOut(_RRBase):
+    """One of the principal's companies."""
+
+    id: str
+    slug: str
+    display_name: str
+    industry: Optional[str] = None
+    primary_color: Optional[str] = None
+    m365_tenant_id: Optional[str] = None
+    m365_consent_granted_at: Optional[datetime] = None
+    archived_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    # Convenience aggregates added by the list endpoint
+    member_count: Optional[int] = None
+    project_count: Optional[int] = None
+
+
+class WorkspaceCreate(_RRBase):
+    slug: str = Field(min_length=2, max_length=64, pattern=r"^[a-z0-9][a-z0-9-]*[a-z0-9]$")
+    display_name: str = Field(min_length=1, max_length=120)
+    industry: Optional[str] = Field(default=None, max_length=64)
+    primary_color: Optional[str] = Field(default=None, pattern=r"^#[0-9a-fA-F]{6}$")
+
+
+class WorkspaceUpdate(_RRBase):
+    display_name: Optional[str] = Field(default=None, min_length=1, max_length=120)
+    industry: Optional[str] = Field(default=None, max_length=64)
+    primary_color: Optional[str] = Field(default=None, pattern=r"^#[0-9a-fA-F]{6}$")
+    m365_tenant_id: Optional[str] = Field(default=None, max_length=64)
+
+
+class WorkspaceMemberOut(_RRBase):
+    id: str
+    workspace_id: str
+    entity_id: Optional[str] = None
+    email: str
+    role: str
+    joined_at: Optional[datetime] = None
+    # Joined fields when membership is fetched with entity info
+    name: Optional[str] = None
+
+
+class WorkspaceMemberCreate(_RRBase):
+    email: str = Field(min_length=3, max_length=320)
+    role: str = Field(pattern=r"^(principal|exec|operator|readonly)$")
+    entity_id: Optional[str] = None
+
+
 # ─── auth ────────────────────────────────────────────────────────────────────
 
 
@@ -66,6 +118,8 @@ class MeOut(_RRBase):
     email: Optional[str] = None
     roles: list[str] = Field(default_factory=list)
     dev_mode: bool = False
+    # Workspaces this user belongs to, with their role per workspace.
+    workspaces: list[WorkspaceOut] = Field(default_factory=list)
 
 
 # ─── entities ────────────────────────────────────────────────────────────────

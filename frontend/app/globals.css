@@ -64,6 +64,21 @@ body {
 }
 .rr-card:hover { border-color: var(--rr-subtle); }
 
+/* ─── Form inputs ────────────────────────────────────────────────────────── */
+.rr-input {
+  background: var(--rr-obsidian);
+  border: 1px solid var(--rr-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: var(--rr-cream);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.rr-input:focus { border-color: var(--rr-brass); }
+.rr-input::placeholder { color: var(--rr-subtle); }
+.rr-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
 /* ─── Status badges ─────────────────────────────────────────────────────── */
 .badge-action  { background: rgba(255,68,68,0.15); color: var(--rr-urgent); border: 1px solid rgba(255,68,68,0.3); }
 .badge-project { background: rgba(68,136,255,0.15); color: var(--rr-intel); border: 1px solid rgba(68,136,255,0.3); }

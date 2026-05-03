@@ -70,9 +70,11 @@ export default function Rail() {
       {/* Settings */}
       <div className="mt-auto border-t p-3" style={{ borderColor: "var(--rr-border)" }}>
         <Link
-          href="/settings/accounts"
+          href="/settings/companies"
           className="flex items-center gap-2 text-xs px-2 py-1 rounded"
-          style={{ color: "var(--rr-subtle)" }}
+          style={{
+            color: pathname.startsWith("/settings") ? "var(--rr-cream)" : "var(--rr-subtle)",
+          }}
         >
           <span>⚙</span>
           <span>Settings</span>
