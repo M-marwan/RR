@@ -1,8 +1,8 @@
 "use client";
 import useSWR from "swr";
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+import { apiFetcher } from "@/lib/api";
 export default function TeamView() {
-  const { data } = useSWR("/api/entities?type=person&limit=20", fetcher);
+  const { data } = useSWR<any[]>("/api/entities?type=person&limit=20", apiFetcher);
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>
       <h1 className="rr-heading text-2xl mb-1" style={{ color: "var(--rr-cream)" }}>Team View</h1>

@@ -1,11 +1,10 @@
 "use client";
 
 import useSWR from "swr";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+import { apiFetcher } from "@/lib/api";
 
 export default function MorningRoom() {
-  const { data, error, isLoading } = useSWR("/api/briefing/today", fetcher, {
+  const { data, error, isLoading } = useSWR<any>("/api/briefing/today", apiFetcher, {
     revalidateOnFocus: false,
     refreshInterval: 300_000, // refresh every 5 min
   });

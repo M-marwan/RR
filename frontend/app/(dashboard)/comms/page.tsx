@@ -15,8 +15,7 @@ import {
 } from "@dnd-kit/core";
 import ThreadDrawer from "@/components/comms/ThreadDrawer";
 import OutboxPanel from "@/components/comms/OutboxPanel";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+import { api, apiFetcher } from "@/lib/api";
 
 type Thread = {
   id: string;
@@ -169,7 +168,7 @@ function Column({
 export default function CommsHub() {
   const [showNoise, setShowNoise] = useState(false);
   const url = `/api/projects/canvas?show_noise=${showNoise}`;
-  const { data, isLoading } = useSWR(url, fetcher, { refreshInterval: 15000 });
+  const { data, isLoading } = useSWR<any>(url, apiFetcher, { refreshInterval: 15000 });
   const [openThread, setOpenThread] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
@@ -194,12 +193,13 @@ export default function CommsHub() {
         ? { clear_project: true }
         : { canvas_project_id: targetId };
 
-    await fetch(`/api/email/threads/${threadKey}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    mutate(url);
+    try {
+      await api.patch(`/api/email/threads/${threadKey}`, body);
+      mutate(url);
+    } catch (e: any) {
+      console.error("Failed to move thread:", e);
+      // SWR will retry on next refresh tick; surface to user via UI in 1A.2
+    }
   }
 
   if (isLoading || !data) {

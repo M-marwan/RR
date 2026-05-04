@@ -32,8 +32,11 @@
 
 // ─── config ──────────────────────────────────────────────────────────────────
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:8000";
+// Default to relative URLs (empty base). The Next.js dev server's `rewrites()`
+// in `next.config.js` forwards /api/* and /health to the backend transparently.
+// Set NEXT_PUBLIC_API_URL only when the frontend runs on a different origin
+// from the backend (production deploys on separate hosts).
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
 
 let _tokenProvider: (() => Promise<string | null>) | null = null;
 

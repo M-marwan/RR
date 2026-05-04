@@ -1,8 +1,8 @@
 "use client";
 import useSWR from "swr";
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+import { apiFetcher } from "@/lib/api";
 export default function IntelligencePage() {
-  const { data, isLoading } = useSWR("/api/intelligence/synthesis?job_type=hidden_truth&limit=10", fetcher, { refreshInterval: 300_000 });
+  const { data, isLoading } = useSWR<any[]>("/api/intelligence/synthesis?job_type=hidden_truth&limit=10", apiFetcher, { refreshInterval: 300_000 });
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>
       <h1 className="rr-heading text-2xl mb-1" style={{ color: "var(--rr-cream)" }}>Intelligence Room</h1>
