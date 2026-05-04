@@ -507,8 +507,9 @@ These are the risks that remain even after the §5 invariants. Most have been pu
 
 ## 16. Decisions still open
 
-1. **M365 tenant topology** — Are your 5–10 companies on one M365 tenant or many? *(Blocks Phase 1B start.)*
+1. ~~**M365 tenant topology**~~ ✅ **Resolved 2026-05-04** — multi-tenant. Each company has its own M365 tenant. Some workspaces hold multiple projects, some hold one. Per-tenant Entra app registration + admin consent required. `workspaces.m365_tenant_id` is the canonical connector key. Onboarding is one-workspace-at-a-time via `scripts/onboard_workspace.py`. See memory key `rr-tenant-topology-2026-05-04`.
 2. **DIFC DPO contact** — Do you have one or need a recommendation? *(Blocks Phase 1C go-live + AUP template review.)*
 3. **Phase 2 paid feed budget** — Any of Reuters/Kpler/S&P preauthorized for $5–20K/year licensing? *(Affects Phase 2 timing.)*
 4. **Daily cost cap default** — Is $5/day per workspace the right default? Will revisit after first week of real usage data in Phase 1B.
 5. **AUP signing process** — Wet signature, e-signature (DocuSign / Adobe Sign), or click-through accept? Affects implementation of `aup_signed_at` capture.
+6. **Per-tenant onboarding cadence** — Do you want all 5–10 tenants onboarded at once (~5 hours of admin-consent flows) or staged company-by-company over a few weeks?

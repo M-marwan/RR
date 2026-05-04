@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Request, Depends
 from sqlalchemy import text
 from app.db.session import get_db
 from app.api.schemas import EntityOut, EntityDossierOut
+from app.auth import current_user
+from app.auth_audit import audit_read
 from typing import Optional
 
 router = APIRouter(tags=["entities"])
@@ -46,7 +48,12 @@ def get_entity(entity_id: str):
 
 
 @router.get("/entities/{entity_id}/dossier", response_model=EntityDossierOut)
-def get_dossier(entity_id: str):
+@audit_read(target_type="entity_dossier", target_id_arg="entity_id")
+def get_dossier(
+    entity_id: str,
+    request: Request = None,  # noqa: B008 — FastAPI handles
+    user: dict = Depends(current_user),
+):
     with get_db() as db:
         entity = db.execute(
             text("SELECT * FROM entities WHERE id = :id"), {"id": entity_id}

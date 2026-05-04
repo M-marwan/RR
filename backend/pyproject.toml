@@ -48,7 +48,14 @@ dependencies = [
     "markdown>=3.6",
     # Auth — Microsoft Entra (Azure AD) JWT validation
     "python-jose[cryptography]>=3.3.0",
-    # DB migrations (already in deps via alembic above; explicit version pin)
+    # Microsoft Graph access — admin-grant OAuth + Mail.Read.
+    # We use msal for token acquisition + httpx for Graph API calls,
+    # not the heavy msgraph-sdk-python.
+    "msal>=1.30.0",
+    # Testing (Phase 1B introduces the first tests — rule 5.8 thread isolation,
+    # rule 5.9 restricted domain enforcement)
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
 ]
 
 [tool.hatch.envs.default.scripts]
