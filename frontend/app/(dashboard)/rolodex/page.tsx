@@ -1,8 +1,11 @@
 "use client";
 import useSWR from "swr";
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+import { apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
+
 export default function Rolodex() {
-  const { data } = useSWR("/api/entities?type=person&limit=50", fetcher);
+  useTelemetry("rolodex");
+  const { data } = useSWR<any[]>("/api/entities?type=person&limit=50", apiFetcher);
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>
       <h1 className="rr-heading text-2xl mb-1" style={{ color: "var(--rr-cream)" }}>Rolodex</h1>

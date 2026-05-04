@@ -16,6 +16,7 @@ import {
 import ThreadDrawer from "@/components/comms/ThreadDrawer";
 import OutboxPanel from "@/components/comms/OutboxPanel";
 import { api, apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
 
 type Thread = {
   id: string;
@@ -166,6 +167,7 @@ function Column({
 }
 
 export default function CommsHub() {
+  useTelemetry("comms");
   const [showNoise, setShowNoise] = useState(false);
   const url = `/api/projects/canvas?show_noise=${showNoise}`;
   const { data, isLoading } = useSWR<any>(url, apiFetcher, { refreshInterval: 15000 });

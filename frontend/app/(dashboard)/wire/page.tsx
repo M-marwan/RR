@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import { useEffect, useRef, useState } from "react";
 import { api, apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
 
 const STATUS_COLOR: Record<string, string> = {
   confirmed: "var(--rr-ok)",
@@ -14,6 +15,7 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default function WirePage() {
+  useTelemetry("wire");
   const [liveItems, setLiveItems] = useState<any[]>([]);
   const [streamError, setStreamError] = useState<string | null>(null);
   const { data, isLoading } = useSWR<any[]>(

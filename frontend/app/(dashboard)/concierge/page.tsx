@@ -1,6 +1,8 @@
 "use client";
 import useSWR from "swr";
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+import { apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
+
 const STAGE_COLOR: Record<string, string> = {
   prospecting: "var(--rr-subtle)",
   first_touch: "var(--rr-slate)",
@@ -8,8 +10,10 @@ const STAGE_COLOR: Record<string, string> = {
   term_sheet: "var(--rr-warn)",
   closing: "var(--rr-ok)",
 };
+
 export default function ConciergePage() {
-  const { data } = useSWR("/api/projects?type=deal", fetcher, { refreshInterval: 60_000 });
+  useTelemetry("concierge");
+  const { data } = useSWR<any[]>("/api/projects?type=deal", apiFetcher, { refreshInterval: 60_000 });
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>
       <h1 className="rr-heading text-2xl mb-1" style={{ color: "var(--rr-cream)" }}>Concierge</h1>

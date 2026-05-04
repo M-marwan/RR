@@ -218,26 +218,53 @@ class EmailThreadOut(_RRBase):
 # ─── briefing (morning room) ─────────────────────────────────────────────────
 
 
+class SourceRef(_RRBase):
+    """Pointer to the underlying record that justifies a claim (rule 5.1).
+
+    `kind` is one of: email, thread, task, project, event, document, url.
+    `id` is either a UUID/string identifier or, for `kind=url`, the URL itself.
+    `label` is an optional human-readable summary shown on hover.
+    """
+
+    kind: str
+    id: str
+    label: Optional[str] = None
+
+
 class ThreeMove(_RRBase):
     rank: int
     move: str
     rationale: Optional[str] = None
+    source_refs: list[SourceRef] = Field(default_factory=list)
 
 
 class CapitalPosition(_RRBase):
-    deployable_usd: Optional[str] = None  # currently a range like "5000-50000"
+    deployable_usd: Optional[str] = None  # range like "5000-50000" or formatted string
+    deployable_usd_low: Optional[int] = None
+    deployable_usd_high: Optional[int] = None
     committed: Optional[int] = 0
+    committed_usd: Optional[int] = None
     pipeline: Optional[str] = None
+    pipeline_summary: Optional[str] = None
 
 
 class OpenLoop(_RRBase):
     person: Optional[str] = None
+    person_name: Optional[str] = None
     days: Optional[int] = None
+    days_waiting: Optional[int] = None
     thread_id: Optional[str] = None
+
+
+class WatchlistItem(_RRBase):
+    rank: Optional[int] = None
+    item: str
+    source_refs: list[SourceRef] = Field(default_factory=list)
 
 
 class RaymondDispatch(_RRBase):
     dispatch: Optional[str] = None
+    dispatch_source_refs: list[SourceRef] = Field(default_factory=list)
     moves: list[ThreeMove] = Field(default_factory=list)
 
 
@@ -245,18 +272,64 @@ class BriefingPayload(_RRBase):
     date: Optional[str] = None
     raymond: Optional[RaymondDispatch] = None
     open_loops: list[OpenLoop] = Field(default_factory=list)
-    watchlist: list[str] = Field(default_factory=list)
+    watchlist: list[WatchlistItem] = Field(default_factory=list)
     capital_position: Optional[CapitalPosition] = None
     withheld: Optional[str] = None
+    generation_mode: Optional[str] = None  # 'deterministic' | 'ai_synthesized'
 
 
 class BriefingOut(_RRBase):
     """Wrapper returned by /api/briefing/today and /api/briefing/{date}."""
 
-    source: Optional[str] = None  # "cache" | "stale" | "seed"
+    id: Optional[str] = None  # briefing_synthesis.id (used for feedback)
+    source: Optional[str] = None  # "cache" | "stale" | "seed" | "computed"
     stale_warning: Optional[str] = None
     briefing: Optional[BriefingPayload] = None
     generated_at: Optional[datetime] = None
+    workspace_id: Optional[str] = None  # NULL = cross-portfolio
+
+
+# ─── briefing feedback (rule 5.13) ───────────────────────────────────────────
+
+
+class BriefingFeedbackCreate(_RRBase):
+    briefing_id: str
+    claim_path: str = Field(min_length=1, max_length=120)
+    verdict: str = Field(pattern=r"^(useful|wrong|noise)$")
+    note: Optional[str] = Field(default=None, max_length=500)
+
+
+class BriefingFeedbackOut(_RRBase):
+    id: int
+    briefing_id: str
+    claim_path: str
+    actor_email: Optional[str] = None
+    verdict: str
+    note: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+
+# ─── costs (rule 5.4) ────────────────────────────────────────────────────────
+
+
+class CostTodayOut(_RRBase):
+    workspace_id: Optional[str] = None
+    cap_usd: float
+    spent_usd: float
+    remaining_usd: float
+    call_count: int
+    by_model: list[dict[str, Any]] = Field(default_factory=list)
+
+
+# ─── telemetry (rule 5.12) ───────────────────────────────────────────────────
+
+
+class TelemetryEventCreate(_RRBase):
+    event_type: str = Field(pattern=r"^(page_view|room_open|feature_use|session_start)$")
+    event_target: str = Field(min_length=1, max_length=64)
+    duration_ms: Optional[int] = None
+    extra: Optional[dict[str, Any]] = None
+    workspace_id: Optional[str] = None
 
 
 # ─── feed (intelligence wire) ────────────────────────────────────────────────

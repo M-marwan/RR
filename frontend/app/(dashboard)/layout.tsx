@@ -4,6 +4,7 @@ import { useState } from "react";
 import Rail from "@/components/layout/Rail";
 import CommandBar from "@/components/layout/CommandBar";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
+import WorkspaceFilter from "@/components/layout/WorkspaceFilter";
 
 export default function DashboardLayout({
   children,
@@ -29,21 +30,24 @@ export default function DashboardLayout({
             flexShrink: 0,
           }}
         >
-          <button
-            onClick={() => setCommandOpen(true)}
-            className="flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors"
-            style={{
-              background: "var(--rr-steel)",
-              border: "1px solid var(--rr-border)",
-              color: "var(--rr-dim)",
-            }}
-          >
-            <span style={{ color: "var(--rr-brass)" }}>⌘</span>
-            <span>Raymond, tell me…</span>
-            <span className="ml-4 text-xs" style={{ color: "var(--rr-subtle)" }}>⌘K</span>
-          </button>
+          <div className="flex items-center min-w-0">
+            <button
+              onClick={() => setCommandOpen(true)}
+              className="flex items-center gap-2 px-3 py-1 rounded text-sm transition-colors flex-shrink-0"
+              style={{
+                background: "var(--rr-steel)",
+                border: "1px solid var(--rr-border)",
+                color: "var(--rr-dim)",
+              }}
+            >
+              <span style={{ color: "var(--rr-brass)" }}>⌘</span>
+              <span>Raymond, tell me…</span>
+              <span className="ml-4 text-xs" style={{ color: "var(--rr-subtle)" }}>⌘K</span>
+            </button>
+            <WorkspaceFilter />
+          </div>
 
-          <div className="flex items-center gap-4 rr-mono text-xs" style={{ color: "var(--rr-dim)" }}>
+          <div className="flex items-center gap-4 rr-mono text-xs flex-shrink-0" style={{ color: "var(--rr-dim)" }}>
             <span id="ticker-brent">BRENT —</span>
             <span id="ticker-dxy">DXY —</span>
             <span style={{ color: "var(--rr-subtle)" }}>

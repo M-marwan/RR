@@ -104,16 +104,24 @@ def me(user: dict = Depends(current_user)):
 
 # API routes — every router mounted here is auth-protected via Depends(current_user).
 # /health and /api/me above are explicit (me is auth-protected; health is not).
-from app.api import entities, projects, tasks, email, briefing, feed, search, admin, workspaces
+from app.api import (
+    entities, projects, tasks, email, briefing, feed, search, admin,
+    workspaces, costs, telemetry, feedback,
+)
 
 _auth = [Depends(current_user)]
 
+# Order: workspaces first (everything else queries workspace context),
+# then briefing (most-traffic), then the rest.
 app.include_router(workspaces.router, prefix="/api", dependencies=_auth)
-app.include_router(entities.router, prefix="/api", dependencies=_auth)
-app.include_router(projects.router, prefix="/api", dependencies=_auth)
-app.include_router(tasks.router, prefix="/api", dependencies=_auth)
-app.include_router(email.router, prefix="/api", dependencies=_auth)
-app.include_router(briefing.router, prefix="/api", dependencies=_auth)
-app.include_router(feed.router, prefix="/api", dependencies=_auth)
-app.include_router(search.router, prefix="/api", dependencies=_auth)
-app.include_router(admin.router, prefix="/api", dependencies=_auth)
+app.include_router(briefing.router,   prefix="/api", dependencies=_auth)
+app.include_router(feedback.router,   prefix="/api", dependencies=_auth)
+app.include_router(costs.router,      prefix="/api", dependencies=_auth)
+app.include_router(telemetry.router,  prefix="/api", dependencies=_auth)
+app.include_router(entities.router,   prefix="/api", dependencies=_auth)
+app.include_router(projects.router,   prefix="/api", dependencies=_auth)
+app.include_router(tasks.router,      prefix="/api", dependencies=_auth)
+app.include_router(email.router,      prefix="/api", dependencies=_auth)
+app.include_router(feed.router,       prefix="/api", dependencies=_auth)
+app.include_router(search.router,     prefix="/api", dependencies=_auth)
+app.include_router(admin.router,      prefix="/api", dependencies=_auth)

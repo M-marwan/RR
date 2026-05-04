@@ -1,13 +1,17 @@
 "use client";
 import useSWR from "swr";
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+import { apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
+
 const COLS = [
   { key: "open", label: "OPEN", color: "var(--rr-brass)" },
   { key: "in_progress", label: "IN PROGRESS", color: "var(--rr-slate)" },
   { key: "done", label: "DONE", color: "var(--rr-ok)" },
 ];
+
 export default function WarRoom() {
-  const { data } = useSWR("/api/tasks", fetcher, { refreshInterval: 60_000 });
+  useTelemetry("war-room");
+  const { data } = useSWR<any[]>("/api/tasks", apiFetcher, { refreshInterval: 60_000 });
   const tasks: any[] = data || [];
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>

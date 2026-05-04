@@ -1,7 +1,9 @@
 "use client";
 import useSWR from "swr";
 import { apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
 export default function IntelligencePage() {
+  useTelemetry("intelligence");
   const { data, isLoading } = useSWR<any[]>("/api/intelligence/synthesis?job_type=hidden_truth&limit=10", apiFetcher, { refreshInterval: 300_000 });
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>

@@ -1,7 +1,9 @@
 "use client";
 import useSWR from "swr";
 import { apiFetcher } from "@/lib/api";
+import { useTelemetry } from "@/lib/hooks/useTelemetry";
 export default function TeamView() {
+  useTelemetry("team");
   const { data } = useSWR<any[]>("/api/entities?type=person&limit=20", apiFetcher);
   return (
     <div className="h-full overflow-y-auto p-6" style={{ background: "var(--rr-obsidian)" }}>
